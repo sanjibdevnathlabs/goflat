@@ -1,8 +1,8 @@
-# flat [![Build Status](https://secure.travis-ci.org/nqd/flat.png?branch=master)](http://travis-ci.org/nqd/flat)
+# goflat
 
-Take a golang map and flatten it or unfatten a map with delimited key.
+This project has been forked from [https://github.com/nqd/flat](https://github.com/nqd/flat)
 
-This work inspired by the [nodejs flat package](https://github.com/hughsk/flat/)
+Take a golang map and flatten it or unflatten a map with delimited key.
 
 ## Method
 
@@ -128,3 +128,7 @@ out, err := flat.Flatten(in, &flat.Options{
 
 - [ ] Safe option for Unflatten
 - [ ] Overwrite
+
+## Known Issues
+
+- If slice is flattened, there are issues with unflattening it.
