@@ -1,4 +1,4 @@
-package flat
+package goflat
 
 import (
 	"reflect"
