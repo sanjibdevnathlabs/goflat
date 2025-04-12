@@ -7,10 +7,10 @@ on:
     branches:
       - master
 
-# Add permissions for benchmark commenting
+# Add permissions for benchmark commenting and data push
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write # Needed for auto-push benchmark data
+  pull-requests: write # Needed for commenting
 
 jobs:
   test:
