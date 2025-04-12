@@ -34,6 +34,11 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v4
+      with:
+        # Fetch all history for comparisons and baseline storage
+        fetch-depth: 0
+        # Explicitly checkout the ref to potentially avoid branch conflicts
+        ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
 
     - name: Lint
       uses: golangci/golangci-lint-action@v6
