@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # Enable version updates for Go modules
+  - package-ecosystem: "gomod"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    # Add assignees and labels (optional)
+    assignees:
+      - "sanjibdevnathlabs"
+    labels:
+      - "dependencies"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "sanjibdevnathlabs"
+    labels:
+      - "dependencies"

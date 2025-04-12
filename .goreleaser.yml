@@ -1,0 +1,65 @@
+# .goreleaser.yml
+# Build customization
+project_name: goflat
+builds:
+  - main: . # Assuming your main package is in the root
+    binary: goflat # The name of the binary (if applicable, change if it's just a library)
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    # Optional: ldflags for version injection
+    # ldflags:
+    #   - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+
+# Release configuration (GitHub Releases)
+release:
+  github:
+    owner: sanjibdevnathlabs
+    name: goflat
+  # Optional: Draft releases are recommended
+  draft: false
+  # Optional: Prerelease automatically if the tag is not a stable release
+  # prerelease: auto
+  # Optional: Name template for the release title
+  # name_template: "{{.ProjectName}}-{{.Tag}}"
+
+# Optional: Archiving configuration
+archives:
+  - format: tar.gz
+    # Optional: Archive name template
+    # name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - LICENSE
+      - README.md
+
+# Optional: nfpm configuration for Linux packages (deb, rpm)
+# nfpm:
+#   formats:
+#     - deb
+#     - rpm
+#   vendor: Your Name
+#   homepage: https://github.com/sanjibdevnathlabs/goflat
+#   maintainer: Your Name <your-email@example.com>
+#   description: Flatten/unflatten nested map or JSON object in Golang.
+#   license: MIT
+#   bindir: /usr/bin
