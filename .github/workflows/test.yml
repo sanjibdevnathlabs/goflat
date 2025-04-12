@@ -90,20 +90,21 @@ jobs:
 
     # Add benchmark step
     - name: Run Benchmarks
-      # Only run benchmarks on the primary Go version for efficiency
-      if: matrix.go == '1.23.0'
-      run: go test -bench=. -benchmem ./... | tee output.txt
+      # Run for all Go versions in matrix
+      run: go test -bench=. -benchmem ./... | tee output-${{ matrix.go }}.txt
 
     # Add step to comment raw benchmark output on PRs
     - name: Comment raw benchmark output
       uses: actions/github-script@v7
-      if: github.event_name == 'pull_request' && matrix.go == '1.23.0'
+      # Run for all Go versions on PRs
+      if: github.event_name == 'pull_request'
       with:
         script: |
           const fs = require('fs');
-          const output = fs.readFileSync('output.txt', 'utf8');
+          const goVersion = "${{ matrix.go }}";
+          const output = fs.readFileSync(`output-${goVersion}.txt`, 'utf8');
           const commentBody = `
-          <details><summary>Raw Benchmark Output (Go ${{ matrix.go }})</summary>
+          <details><summary>Raw Benchmark Output (Go ${goVersion})</summary>
 
           \`\`\`
           ${output}
@@ -119,18 +120,17 @@ jobs:
 
     # Add benchmark comparison/storage step
     - name: Store/Compare benchmark result
-      # Only store/comment on the primary Go version
-      if: matrix.go == '1.23.0'
+      # Run for all Go versions in matrix
       uses: benchmark-action/github-action-benchmark@v1
       with:
         # What benchmark tool the output.txt file is
         tool: 'go'
         # Where the output from the benchmark tool is stored
-        output-file-path: output.txt
+        output-file-path: output-${{ matrix.go }}.txt # Use versioned output file
         # Workflow will fail when an alert happens
         fail-on-alert: true
-        # Name of the benchmark run
-        name: Go Benchmark
+        # Name of the benchmark run (include Go version)
+        name: Go Benchmark (${{ matrix.go }})
         # GitHub API token
         github-token: ${{ secrets.GITHUB_TOKEN }}
         # Store/fetch data to/from the master branch instead of gh-pages
