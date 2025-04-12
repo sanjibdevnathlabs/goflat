@@ -1,26 +1,14 @@
 # .goreleaser.yml
 # Build customization
+version: 2 # Specify config format version
 project_name: goflat
-builds:
-  - main: . # Assuming your main package is in the root
-    binary: goflat # The name of the binary (if applicable, change if it's just a library)
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    # Optional: ldflags for version injection
-    # ldflags:
-    #   - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+
+# No builds section needed for a library release
 
 checksum:
   name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+# snapshot:
+#   name_template: "{{ incpatch .Version }}-next" # Removed deprecated field
 changelog:
   sort: asc
   filters:
@@ -43,14 +31,19 @@ release:
   # Optional: Name template for the release title
   # name_template: "{{.ProjectName}}-{{.Tag}}"
 
-# Optional: Archiving configuration
+# Archiving source code
 archives:
-  - format: tar.gz
-    # Optional: Archive name template
-    # name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+  - id: source # Optional ID
+    format: tar.gz
+    # Optional: Archive name template (defaults work well for source)
+    # name_template: '{{ .ProjectName }}_{{ .Version }}_source'
     files:
       - LICENSE
       - README.md
+      - go.mod
+      - go.sum
+      - '*.go' # Include go source files
+      - '.github/**' # Include relevant github configs
 
 # Optional: nfpm configuration for Linux packages (deb, rpm)
 # nfpm:
