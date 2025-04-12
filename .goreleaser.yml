@@ -3,7 +3,9 @@
 version: 2 # Specify config format version
 project_name: goflat
 
-# No builds section needed for a library release
+# Explicitly skip building binaries for the library
+builds:
+  - skip: true
 
 checksum:
   name_template: 'checksums.txt'
