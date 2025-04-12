@@ -83,8 +83,9 @@ jobs:
         name: Go Benchmark
         # GitHub API token
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        # Optional: Compare results with the results from the 'master' branch
-        # Only works on PRs. If not set, it only stores results without comparison.
+        # Store/fetch data to/from the master branch instead of gh-pages
+        gh-pages-branch: master
+        # Push data to the data branch only on master pushes
         auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         # Comment on pull requests benchmark results
         comment-on-alert: true
