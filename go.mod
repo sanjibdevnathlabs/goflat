@@ -1,5 +1,5 @@
-module github.com/sanjib1990/goflat
+module github.com/sanjibdevnathlabs/goflat
 
-go 1.19
+go 1.23
 
 require github.com/imdario/mergo v0.3.12
