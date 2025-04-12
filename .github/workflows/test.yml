@@ -58,23 +58,24 @@ jobs:
     # Add step to calculate total coverage percentage
     - name: Calculate Coverage Percentage
       id: coverage
-      # Only run on primary Go version
-      if: matrix.go == '1.23.0'
+      # Run for all Go versions
       run: |
         echo "total_coverage=$(go tool cover -func=coverage.out | grep total | awk '{print $3}')" >> $GITHUB_OUTPUT
 
     # Add step to comment coverage percentage on PRs
     - name: Comment Coverage Percentage
       uses: actions/github-script@v7
-      if: github.event_name == 'pull_request' && matrix.go == '1.23.0'
+      # Run for all Go versions on PRs
+      if: github.event_name == 'pull_request'
       with:
         script: |
           const coverage = "${{ steps.coverage.outputs.total_coverage }}";
+          const goVersion = "${{ matrix.go }}";
           if (!coverage) {
-            console.log('Coverage percentage not found.');
+            console.log('Coverage percentage not found for Go ' + goVersion);
             return;
           }
-          const commentBody = `📊 Code Coverage: **${coverage}**`;
+          const commentBody = `📊 Code Coverage (Go ${goVersion}): **${coverage}**`;
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
