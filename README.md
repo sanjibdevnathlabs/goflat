@@ -1,7 +1,7 @@
 # goflat
 
 [![Go Build](https://github.com/sanjibdevnathlabs/goflat/actions/workflows/test.yml/badge.svg)](https://github.com/sanjibdevnathlabs/goflat/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/sanjibdevnathlabs/goflat/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/sanjibdevnathlabs/goflat)
+[![codecov](https://codecov.io/gh/sanjibdevnathlabs/goflat/graph/badge.svg)](https://codecov.io/gh/sanjibdevnathlabs/goflat)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sanjibdevnathlabs/goflat)](https://goreportcard.com/report/github.com/sanjibdevnathlabs/goflat)
 [![Go Reference](https://pkg.go.dev/badge/github.com/sanjibdevnathlabs/goflat.svg)](https://pkg.go.dev/github.com/sanjibdevnathlabs/goflat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
