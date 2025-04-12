@@ -1,5 +1,16 @@
 name: build
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master # Run on pushes to master
+  pull_request: # Run on pull requests targeting master
+    branches:
+      - master
+
+# Add permissions for benchmark commenting
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   test:
@@ -44,8 +55,89 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: ${{ github.repository }}
 
+    # Add step to calculate total coverage percentage
+    - name: Calculate Coverage Percentage
+      id: coverage
+      # Run for all Go versions
+      run: |
+        echo "total_coverage=$(go tool cover -func=coverage.out | grep total | awk '{print $3}')" >> $GITHUB_OUTPUT
+
+    # Add step to comment coverage percentage on PRs
+    - name: Comment Coverage Percentage
+      uses: actions/github-script@v7
+      # Run for all Go versions on PRs
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const coverage = "${{ steps.coverage.outputs.total_coverage }}";
+          const goVersion = "${{ matrix.go }}";
+          if (!coverage) {
+            console.log('Coverage percentage not found for Go ' + goVersion);
+            return;
+          }
+          const commentBody = `📊 Code Coverage (Go ${goVersion}): **${coverage}**`;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: commentBody
+          });
+
     - name: Install govulncheck
       run: go install golang.org/x/vuln/cmd/govulncheck@latest
 
     - name: Run govulncheck
       run: govulncheck ./...
+
+    # Add benchmark step
+    - name: Run Benchmarks
+      # Run for all Go versions in matrix
+      run: go test -bench=. -benchmem ./... | tee output-${{ matrix.go }}.txt
+
+    # Add step to comment raw benchmark output on PRs
+    - name: Comment raw benchmark output
+      uses: actions/github-script@v7
+      # Run for all Go versions on PRs
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const fs = require('fs');
+          const goVersion = "${{ matrix.go }}";
+          const output = fs.readFileSync(`output-${goVersion}.txt`, 'utf8');
+          const commentBody = `
+          <details><summary>Raw Benchmark Output (Go ${goVersion})</summary>
+
+          \`\`\`
+          ${output}
+          \`\`\`
+          </details>
+          `;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: commentBody
+          });
+
+    # Add benchmark comparison/storage step
+    - name: Store/Compare benchmark result
+      # Run for all Go versions in matrix
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        # What benchmark tool the output.txt file is
+        tool: 'go'
+        # Where the output from the benchmark tool is stored
+        output-file-path: output-${{ matrix.go }}.txt # Use versioned output file
+        # Workflow will fail when an alert happens
+        fail-on-alert: true
+        # Name of the benchmark run (include Go version)
+        name: Go Benchmark (${{ matrix.go }})
+        # GitHub API token
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        # Store/fetch data to/from the master branch instead of gh-pages
+        gh-pages-branch: master
+        # Push data to the data branch only on master pushes
+        auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        # Comment on pull requests benchmark results
+        comment-on-alert: true
+        summary-always: true # Always add a summary table
