@@ -67,8 +67,31 @@ jobs:
       if: matrix.go == '1.23.0'
       run: go test -bench=. -benchmem ./... | tee output.txt
 
-    # Add benchmark comment step
-    - name: Store benchmark result
+    # Add step to comment raw benchmark output on PRs
+    - name: Comment raw benchmark output
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request' && matrix.go == '1.23.0'
+      with:
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('output.txt', 'utf8');
+          const commentBody = `
+          <details><summary>Raw Benchmark Output (Go ${{ matrix.go }})</summary>
+
+          \`\`\`
+          ${output}
+          \`\`\`
+          </details>
+          `;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: commentBody
+          });
+
+    # Add benchmark comparison/storage step
+    - name: Store/Compare benchmark result
       # Only store/comment on the primary Go version
       if: matrix.go == '1.23.0'
       uses: benchmark-action/github-action-benchmark@v1
