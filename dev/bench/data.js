@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1744482120914,
+  "lastUpdate": 1744482440099,
   "repoUrl": "https://github.com/sanjibdevnathlabs/goflat",
   "entries": {
     "Go Benchmark (stable)": [
@@ -72,6 +72,78 @@ window.BENCHMARK_DATA = {
             "value": 401,
             "unit": "allocs/op",
             "extra": "44536 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "devnath.sanjib@gmail.com",
+            "name": "sanjib1990",
+            "username": "sanjibdevnathlabs"
+          },
+          "committer": {
+            "email": "devnath.sanjib@gmail.com",
+            "name": "sanjib1990",
+            "username": "sanjibdevnathlabs"
+          },
+          "distinct": true,
+          "id": "96935f312ee54cb52189a3ade38bbf032c8a784b",
+          "message": "fix(release): configure goreleaser for library release",
+          "timestamp": "2025-04-12T23:56:19+05:30",
+          "tree_id": "9e6ccb2f939f0d790b8d32d980272de1ba662a7d",
+          "url": "https://github.com/sanjibdevnathlabs/goflat/commit/96935f312ee54cb52189a3ade38bbf032c8a784b"
+        },
+        "date": 1744482439872,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFlatten",
+            "value": 12513,
+            "unit": "ns/op\t   14640 B/op\t     116 allocs/op",
+            "extra": "95946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFlatten - ns/op",
+            "value": 12513,
+            "unit": "ns/op",
+            "extra": "95946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFlatten - B/op",
+            "value": 14640,
+            "unit": "B/op",
+            "extra": "95946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFlatten - allocs/op",
+            "value": 116,
+            "unit": "allocs/op",
+            "extra": "95946 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkUnflatten",
+            "value": 26865,
+            "unit": "ns/op\t   27144 B/op\t     401 allocs/op",
+            "extra": "44798 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkUnflatten - ns/op",
+            "value": 26865,
+            "unit": "ns/op",
+            "extra": "44798 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkUnflatten - B/op",
+            "value": 27144,
+            "unit": "B/op",
+            "extra": "44798 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkUnflatten - allocs/op",
+            "value": 401,
+            "unit": "allocs/op",
+            "extra": "44798 times\n4 procs"
           }
         ]
       }
