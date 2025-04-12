@@ -1,8 +1,8 @@
 .PHONY: lint-pkgs lint test
 
 lint-pkgs:
-	GO111MODULE=off go get -u honnef.co/go/tools/cmd/staticcheck
-	GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell
+	go get -u honnef.co/go/tools/cmd/staticcheck
+	go get -u github.com/client9/misspell/cmd/misspell
 
 lint:
 	$(exit $(go fmt ./... | wc -l))
