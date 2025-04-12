@@ -1,5 +1,16 @@
 name: build
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master # Run on pushes to master
+  pull_request: # Run on pull requests targeting master
+    branches:
+      - master
+
+# Add permissions for benchmark commenting
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   test:
@@ -49,3 +60,32 @@ jobs:
 
     - name: Run govulncheck
       run: govulncheck ./...
+
+    # Add benchmark step
+    - name: Run Benchmarks
+      # Only run benchmarks on the primary Go version for efficiency
+      if: matrix.go == '1.23.0'
+      run: go test -bench=. -benchmem ./... | tee output.txt
+
+    # Add benchmark comment step
+    - name: Store benchmark result
+      # Only store/comment on the primary Go version
+      if: matrix.go == '1.23.0'
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        # What benchmark tool the output.txt file is
+        tool: 'go'
+        # Where the output from the benchmark tool is stored
+        output-file-path: output.txt
+        # Workflow will fail when an alert happens
+        fail-on-alert: true
+        # Name of the benchmark run
+        name: Go Benchmark
+        # GitHub API token
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        # Optional: Compare results with the results from the 'master' branch
+        # Only works on PRs. If not set, it only stores results without comparison.
+        auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        # Comment on pull requests benchmark results
+        comment-on-alert: true
+        summary-always: true # Always add a summary table

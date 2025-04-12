@@ -508,3 +508,100 @@ func TestUnflattenPrefix(t *testing.T) {
 		}
 	}
 }
+
+// --- Benchmarks ---
+
+// Define package-level variables to store results and prevent compiler optimization.
+var benchResult map[string]interface{}
+var benchErr error
+
+// prepareBenchmarkData creates a moderately complex nested map for benchmarking.
+func prepareBenchmarkData() map[string]interface{} {
+	return map[string]interface{}{
+		"user": map[string]interface{}{ // L1
+			"id":       12345,
+			"name":     "John Doe",
+			"email":    "john.doe@example.com",
+			"isActive": true,
+			"address": map[string]interface{}{ // L2
+				"street":  "123 Main St",
+				"city":    "Anytown",
+				"zip":     "12345",
+				"country": "USA",
+			},
+			"roles": []interface{}{ // L2
+				"admin",
+				"editor",
+				map[string]interface{}{ // L3
+					"permission": "read-only",
+				},
+			},
+		},
+		"settings": map[string]interface{}{ // L1
+			"theme":    "dark",
+			"fontSize": 14,
+			"notify": map[string]interface{}{ // L2
+				"email": true,
+				"sms":   false,
+			},
+			"preferences": []interface{}{ // L2
+				map[string]interface{}{ // L3
+					"type":  "a",
+					"value": true,
+				},
+				map[string]interface{}{ // L3
+					"type":  "b",
+					"value": false,
+				},
+			},
+		},
+		"metadata": map[string]interface{}{ // L1
+			"createdAt": "2024-01-01T10:00:00Z",
+			"updatedAt": "2024-04-12T15:30:00Z",
+			"version":   3.1,
+		},
+	}
+}
+
+// prepareBenchmarkFlatData creates a flat version of the benchmark data.
+func prepareBenchmarkFlatData() map[string]interface{} {
+	// Flatten the nested data once to get the input for Unflatten benchmark
+	data, _ := Flatten(prepareBenchmarkData(), nil)
+	return data
+}
+
+func BenchmarkFlatten(b *testing.B) {
+	nestedData := prepareBenchmarkData()
+	opts := &Options{Delimiter: "."}
+	var r map[string]interface{}
+	var err error
+
+	b.ReportAllocs()
+	b.ResetTimer() // Reset timer after setup
+
+	for i := 0; i < b.N; i++ {
+		r, err = Flatten(nestedData, opts)
+	}
+
+	// Assign results to prevent optimization
+	benchResult = r
+	benchErr = err
+}
+
+func BenchmarkUnflatten(b *testing.B) {
+	flatData := prepareBenchmarkFlatData() // Prepare flat data outside the loop
+	opts := &Options{Delimiter: "."}
+	var r map[string]interface{}
+	var err error
+
+	b.ReportAllocs()
+	b.ResetTimer() // Reset timer after setup
+
+	for i := 0; i < b.N; i++ {
+		r, err = Unflatten(flatData, opts)
+	}
+
+	// Assign results to prevent optimization
+	benchResult = r
+	benchErr = err
+}

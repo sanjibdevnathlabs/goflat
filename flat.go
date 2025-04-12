@@ -8,6 +8,10 @@ import (
 	"github.com/imdario/mergo"
 )
 
+var (
+	merge = mergo.Merge
+)
+
 // Options the flatten options.
 // By default: Delimiter = "."
 type Options struct {
@@ -114,7 +118,7 @@ func unflatten(flat map[string]interface{}, opts *Options) (nested map[string]in
 
 	for k, v := range flat {
 		temp := uf(k, v, opts).(map[string]interface{})
-		err = mergo.Merge(&nested, temp, func(c *mergo.Config) { c.Overwrite = true })
+		err = merge(&nested, temp, func(c *mergo.Config) { c.Overwrite = true })
 		if err != nil {
 			return
 		}
